@@ -1,5 +1,5 @@
-function test() {
-  console.log("hoge")
+function Test() {
+
 }
 
 const workBookId = "1e6XBOcSyNNRzfq87pZIKILpYF9DLrvo4TF71STpD4EE"
