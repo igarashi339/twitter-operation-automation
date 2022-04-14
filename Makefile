@@ -26,4 +26,4 @@ shell:
 # nodemodulesを手元にコピーする(エディターの補完を効かせるため)
 .PHONY: copy
 copy:
-	sudo docker cp twitter-operation-automation:/code/node_modules ./gas/
+	sudo docker cp twitter-operation-automation_clasp_1:/code/node_modules ./gas/
