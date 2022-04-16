@@ -165,18 +165,14 @@ export function CreateReplyTweet(tweetText, reply_tweet_id) {
  * 現状の仕様では直近でフォローした1000のみ返す。（それ以上はpaginationの考慮が必要となる。）
  * リムーブするかチェックする対象としては直近1000人で十分の想定のためこの仕様としている。
  */
-function GetSelfFollowing() {
+export function GetSelfFollowing() {
   const url = `https://api.twitter.com/2/users/${selfUserId}/following?max_results=1000`
   const options = {
     "method": "get",
     "muteHttpExceptions": true
   }
   const response = JSON.parse(service.fetch(url, options));
-  return response.data.map(x => ({
-    id: x.id,
-    name: x.name,
-    username: x.username
-  }))
+  return response.data.map(x => x.id)
 }
 
 /**
@@ -184,18 +180,14 @@ function GetSelfFollowing() {
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/get-users-id-followers
  * RateLimit: 15回/15分
  */
-function GetSelfFollower() {
+ export function GetSelfFollower() {
   const url = `https://api.twitter.com/2/users/${selfUserId}/followers`
   const options = {
     "method": "get",
     "muteHttpExceptions": true
   }
   const response = JSON.parse(service.fetch(url, options));
-  return response.data.map(x => ({
-    id: x.id,
-    name: x.name,
-    username: x.username
-  }))
+  return response.data.map(x => x.id)
 }
 
 /**
