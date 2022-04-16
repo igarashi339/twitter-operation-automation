@@ -5,6 +5,9 @@ const workBookId = "1e6XBOcSyNNRzfq87pZIKILpYF9DLrvo4TF71STpD4EE"
  */
 export function GetAllData(sheetName) {
   const [sheet, lastCol, lastRow] = GetSheetInfo(sheetName)
+  if (lastRow == 0) {
+    return []
+  }
   return sheet.getRange(2, 1, lastRow - 1, lastCol).getValues()
 }
 
