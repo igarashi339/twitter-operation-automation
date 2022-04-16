@@ -4,6 +4,9 @@ const secrets = GetSecretsFromSpreadSheet()
 const service = GetService(secrets);
 const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
 
+export function TwitterHandlerTest() {
+}
+
 /**
  * キーワードを指定して最近投稿されたツイートをリストで取得する。リツイートは取得しない。
  * Rate Limit: 180/15[分]
@@ -152,6 +155,39 @@ export function CreateReplyTweet(tweetText, reply_tweet_id) {
   const response = JSON.parse(service.fetch(endpoint, options))
   console.log(response)
   return response["data"]["id"]
+}
+
+/**
+ * 自分自身がフォローしているユーザを一覧で返す。
+ * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/get-users-id-following
+ * RateLimit: 15回/15分
+ * note: 
+ * 現状の仕様では直近でフォローした1000のみ返す。（それ以上はpaginationの考慮が必要となる。）
+ * リムーブするかチェックする対象としては直近1000人で十分の想定のためこの仕様としている。
+ */
+export function GetSelfFollowing() {
+  const url = `https://api.twitter.com/2/users/${selfUserId}/following?max_results=1000`
+  const options = {
+    "method": "get",
+    "muteHttpExceptions": true
+  }
+  const response = JSON.parse(service.fetch(url, options));
+  return response.data.map(x => x.id)
+}
+
+/**
+ * 自分自身のフォロワーを一覧で返す。
+ * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/get-users-id-followers
+ * RateLimit: 15回/15分
+ */
+ export function GetSelfFollower() {
+  const url = `https://api.twitter.com/2/users/${selfUserId}/followers`
+  const options = {
+    "method": "get",
+    "muteHttpExceptions": true
+  }
+  const response = JSON.parse(service.fetch(url, options));
+  return response.data.map(x => x.id)
 }
 
 /**
