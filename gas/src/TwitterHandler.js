@@ -5,7 +5,6 @@ const service = GetService(secrets);
 const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
 
 export function TwitterHandlerTest() {
-  console.log(GetSelfFollowing())
 }
 
 /**
@@ -161,6 +160,7 @@ export function CreateReplyTweet(tweetText, reply_tweet_id) {
 /**
  * 自分自身がフォローしているユーザを一覧で返す。
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/get-users-id-following
+ * RateLimit: 15回/15分
  * note: 
  * 現状の仕様では直近でフォローした1000のみ返す。（それ以上はpaginationの考慮が必要となる。）
  * リムーブするかチェックする対象としては直近1000人で十分の想定のためこの仕様としている。
@@ -182,9 +182,20 @@ function GetSelfFollowing() {
 /**
  * 自分自身のフォロワーを一覧で返す。
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/get-users-id-followers
+ * RateLimit: 15回/15分
  */
 function GetSelfFollower() {
-
+  const url = `https://api.twitter.com/2/users/${selfUserId}/followers`
+  const options = {
+    "method": "get",
+    "muteHttpExceptions": true
+  }
+  const response = JSON.parse(service.fetch(url, options));
+  return response.data.map(x => ({
+    id: x.id,
+    name: x.name,
+    username: x.username
+  }))
 }
 
 /**
