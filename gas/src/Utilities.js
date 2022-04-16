@@ -1,6 +1,5 @@
 import { GetAllData } from "./SpreadSheatHandler"
 import twitter from "twitter-text"
-// const twitter = require('twitter-text');
 
 /**
  * 全体設定から各機能のON/OFFを取得する
@@ -41,9 +40,7 @@ export function IsActive({ startTime, endTime }) {
   if (startTime <= currentTime && currentTime <= endTime) {
     return true
   }
-  else {
-    return false
-  }
+  return false
 }
 
 /**
