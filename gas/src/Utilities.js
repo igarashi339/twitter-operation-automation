@@ -15,11 +15,8 @@ export function GetOnOffSetting(key) {
  * 文字数チェック
  * npmモジュール「twitter-text」を使用する
  */
-export function CountText() {
-  const text = "123aaabbbあああいいい"
-  // const count = 23
-  const count = twitter.parseTweet(text)
-  console.log(count)
+export function CountText(text) {
+  return twitter.parseTweet(text).weightedLength
 }
 
 /**
