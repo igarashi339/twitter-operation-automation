@@ -140,7 +140,7 @@ export function CreateTweet(tweetText) {
  */
 export function CreateReplyTweet(tweetText, reply_tweet_id) {
   const endpoint = "https://api.twitter.com/2/tweets";
-  payload = {
+  var payload = {
     text: tweetText
   }
   if (reply_tweet_id != undefined) {
