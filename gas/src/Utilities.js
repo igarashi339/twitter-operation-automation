@@ -1,6 +1,5 @@
 import { GetAllData } from "./SpreadSheatHandler"
 import twitter from "twitter-text"
-// const twitter = require('twitter-text');
 
 /**
  * 全体設定から各機能のON/OFFを取得する
@@ -15,11 +14,8 @@ export function GetOnOffSetting(key) {
  * 文字数チェック
  * npmモジュール「twitter-text」を使用する
  */
-export function CountText() {
-  const text = "123aaabbbあああいいい"
-  // const count = 23
-  const count = twitter.parseTweet(text)
-  console.log(count)
+export function CountText(text) {
+  return twitter.parseTweet(text).weightedLength
 }
 
 /**
@@ -44,9 +40,7 @@ export function IsActive({ startTime, endTime }) {
   if (startTime <= currentTime && currentTime <= endTime) {
     return true
   }
-  else {
-    return false
-  }
+  return false
 }
 
 /**

@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "push": "npm run build && clasp push"
   },
   "dependencies": {
     "@types/google-apps-script": "^1.0.46",

@@ -34,8 +34,7 @@ export function ExecFollow() {
     // フォローしてスプレッドシートを更新する
     shouldFollowUsers.forEach(user => {
       // フォローする
-      // FollowUser(user.userId)
-      console.log(user)
+      FollowUser(user.userId)
 
       // スプレッドシートを更新する
       const followDate = FormatDate(new Date())
