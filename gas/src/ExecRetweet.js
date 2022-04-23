@@ -2,6 +2,14 @@ import { GetAllData } from "./SpreadSheatHandler"
 import { SearchRecentTweets, Retweet } from "./TwitterHandler"
 
 export function ExecRetweet() {
+  try {
+    ExecRetweetImpl()
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+function ExecRetweetImpl() {
   const retweetSetting = GetRetweetInfoFromShreadSheet()
 
   // リツイート機能がOFFなら何もしない

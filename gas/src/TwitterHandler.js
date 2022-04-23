@@ -1,9 +1,5 @@
 import { GetAllData } from "./SpreadSheatHandler";
 
-const secrets = GetSecretsFromSpreadSheet()
-const service = GetService(secrets);
-const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
-
 export function TwitterHandlerTest() {
 }
 
@@ -13,6 +9,9 @@ export function TwitterHandlerTest() {
  * ref: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
  */
 export function SearchRecentTweets(query) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+
   const maxResults = 50;
   const tweetFields = "author_id,referenced_tweets"
   const url = `https://api.twitter.com/2/tweets/search/recent?query=${query}&max_results=${maxResults}&tweet.fields=${tweetFields}`
@@ -31,6 +30,9 @@ export function SearchRecentTweets(query) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-id
  */
 export function GetUserInfo(userId) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+
   const userFields = "id,name,username,protected,public_metrics"
   const url = `https://api.twitter.com/2/users/${userId}?user.fields=${userFields}`
   const response = JSON.parse(service.fetch(url, { "method": "get" }));
@@ -50,6 +52,9 @@ export function GetUserInfo(userId) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-by
  */
 export function GetUserIdByUsername(username) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+
   const url = `https://api.twitter.com/2/users/by?usernames=${username}`
   const response = JSON.parse(service.fetch(url, { "method": "get" }));
   return response["data"][0]["id"]
@@ -61,6 +66,10 @@ export function GetUserIdByUsername(username) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/post-users-source_user_id-following
  */
 export function FollowUser(userId) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+  const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
+
   const url = `https://api.twitter.com/2/users/${selfUserId}/following`
   const options = {
     "method": "post",
@@ -78,6 +87,10 @@ export function FollowUser(userId) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/delete-users-source_id-following
  */
 export function UnfollowUser(userId) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+  const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
+
   const url = `https://api.twitter.com/2/users/${selfUserId}/following/${userId}`
   const options = {
     "method": "delete",
@@ -93,6 +106,10 @@ export function UnfollowUser(userId) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/tweets/likes/api-reference/post-users-id-likes
  */
 export function LikeTweet(tweetId) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+  const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
+
   const url = `https://api.twitter.com/2/users/${selfUserId}/likes`
   const options = {
     "method": "post",
@@ -110,6 +127,10 @@ export function LikeTweet(tweetId) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/tweets/retweets/api-reference/post-users-id-retweets
  */
 export function Retweet(tweetId) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+  const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
+
   const url = `https://api.twitter.com/2/users/${selfUserId}/retweets`
   const options = {
     "method": "post",
@@ -139,8 +160,11 @@ export function CreateTweet(tweetText) {
  * ref: https://developer.twitter.com/en/docs/twitter-api/tweets/manage-tweets/api-reference/post-tweets
  */
 export function CreateReplyTweet(tweetText, reply_tweet_id) {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+
   const endpoint = "https://api.twitter.com/2/tweets";
-  payload = {
+  var payload = {
     text: tweetText
   }
   if (reply_tweet_id != undefined) {
@@ -166,6 +190,10 @@ export function CreateReplyTweet(tweetText, reply_tweet_id) {
  * リムーブするかチェックする対象としては直近1000人で十分の想定のためこの仕様としている。
  */
 export function GetSelfFollowing() {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+  const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
+
   const url = `https://api.twitter.com/2/users/${selfUserId}/following?max_results=1000`
   const options = {
     "method": "get",
@@ -181,6 +209,10 @@ export function GetSelfFollowing() {
  * RateLimit: 15回/15分
  */
  export function GetSelfFollower() {
+  const secrets = GetSecretsFromSpreadSheet()
+  const service = GetService(secrets);
+  const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
+
   const url = `https://api.twitter.com/2/users/${selfUserId}/followers`
   const options = {
     "method": "get",
