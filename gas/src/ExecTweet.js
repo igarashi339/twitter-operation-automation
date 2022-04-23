@@ -3,6 +3,14 @@ import { CreateTweet, CreateReplyTweet } from "./TwitterHandler"
 import { GetOnOffSetting } from "./Utilities"
 
 export function ExecTweet() {
+  try {
+    ExecTweetImpl()
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+function ExecTweetImpl() {
   // 全体設定でツイート機能がOFFになっている場合は何もしないで終了する
   if (GetOnOffSetting("ツイート") == "OFF") {
     return

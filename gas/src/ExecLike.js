@@ -2,6 +2,14 @@ import { GetAllData } from "./SpreadSheatHandler"
 import { SearchRecentTweets, LikeTweet } from "./TwitterHandler"
 
 export function ExecLike() {
+  try {
+    ExecLikeImpl()
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+function ExecLikeImpl() {
   const likeSetting = GetLikeInfoFromShreadSheet()
 
   // いいね機能がOFFなら何もしない

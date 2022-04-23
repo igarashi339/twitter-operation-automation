@@ -3,6 +3,14 @@ import { GetSelfFollowing, GetSelfFollower, UnfollowUser } from "./TwitterHandle
 import { GetAllData } from "./SpreadSheatHandler"
 
 export function ExecUnfollow() {
+  try {
+    ExecUnfollowImpl()
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+function ExecUnfollowImpl() {
   // 全体設定でアンフォロー機能がOFFになっている場合は何もしないで終了する
   if (GetOnOffSetting("アンフォロー") == "OFF") {
     return

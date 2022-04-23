@@ -1,8 +1,16 @@
 import { GetOnOffSetting, GetFunctionSettings, FormatDate, IsActive } from "./Utilities"
 import { GetAllData, AddData} from "./SpreadSheatHandler"
-import { GetUserInfo, SearchRecentTweets } from "./TwitterHandler"
+import { GetUserInfo, SearchRecentTweets, FollowUser } from "./TwitterHandler"
 
 export function ExecFollow() {
+  try {
+    ExecFollowImpl()
+  } catch(e) {
+    console.log(e.message)
+  }
+}
+
+function ExecFollowImpl() {
   // 全体設定でフォロー機能がOFFになっている場合は何もしないで終了する
   if (GetOnOffSetting("フォロー") == "OFF") {
     return
