@@ -1,6 +1,6 @@
 import { CountText } from "./Utilities"
 
-export function WriteWordCount(e) {
+export function TextCount(e) {
 
   // 編集されたシート名を取得する
   const sheet = e.source.getActiveSheet()
