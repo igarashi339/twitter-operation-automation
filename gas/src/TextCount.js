@@ -1,6 +1,6 @@
 import { CountText } from "./Utilities"
 
-export function WriteWordCount(e) {
+export function TextCount(e) {
 
   // 編集されたシート名を取得する
   const sheet = e.source.getActiveSheet()
@@ -20,15 +20,10 @@ export function WriteWordCount(e) {
       if (j == 2) {
         const text = sheet.getRange(i, j).getValue()
         const count = CountText(text)
-        sheet.getRange(i, j + 1).setValue(count)
-      }
 
-      // 文字カウント列が編集されていた場合、ツイート本文列の文字を参照して文字数を記載し直す
-      // if (j == 3) {
-      //   const text = sheet.getRange(i, j - 1).getValue()
-      //   const count = CountText(text)
-      //   sheet.getRange(i, j).setValue(count)
-      // }
+        // ツイート本文があれば文字数をセットし、なければ空をセット(削除)する
+        sheet.getRange(i, j + 1).setValue(count ? count : '')
+      }
     }
   }
 }
