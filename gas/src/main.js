@@ -4,7 +4,7 @@ import { ExecRetweet } from "./ExecRetweet";
 import { ExecTweet } from "./ExecTweet";
 import { ExecUnfollow } from "./ExecUnfollow";
 import { TwitterHandlerTest } from "./TwitterHandler"
-import { TextCount } from "./TextCount"
+import { CountText } from "./Utilities";
 
 global.ExecFollow = ExecFollow
 global.ExecLike = ExecLike
@@ -12,4 +12,4 @@ global.ExecRetweet = ExecRetweet
 global.ExecTweet = ExecTweet
 global.ExecUnfollow = ExecUnfollow
 global.TwitterHandlerTest = TwitterHandlerTest
-global.TextCount = TextCount
+global.CountText = CountText
