@@ -19,7 +19,7 @@ export function CountText(text) {
 }
 
 /**
- * いいね・リツイート・フォローの情報を取得する
+ * いいね・リツイート・フォローの設定を取得する
  */
 export function GetFunctionSettings(key) {
   const settings = GetAllData("いいね・リツイート・フォロー")
@@ -33,6 +33,24 @@ export function GetFunctionSettings(key) {
 }
 
 /**
+ * いいね・リツイート・フォローの情報をいろいろ加工して返す
+ */
+export function GetFunctionInfo(key) {
+  const onOff = GetOnOffSetting(key)
+  const settings = GetFunctionSettings(key)
+  const isOn = onOff == "ON"
+  const rows = settings.map(setting => ({
+    ...setting,
+    isValid: IsValid(setting),
+    query: setting.keywords.join(" OR ")
+  }))
+  return {
+    isOn,
+    rows
+  }
+}
+
+/**
  * アクティブ時間かどうか判定する
  */
 export function IsActive({ startTime, endTime }) {
@@ -41,6 +59,33 @@ export function IsActive({ startTime, endTime }) {
     return true
   }
   return false
+}
+
+/**
+ * 有効かどうか判定する
+ */
+export function IsValid({ startTime, endTime, keywords, count }) {
+  // 開始時間もしくは終了時間が未入力なら無効と判定する
+  if (!startTime || !endTime) {
+    return false
+  }
+
+  // アクティブ時間でなければ無効と判定する
+  if (!IsActive({ startTime, endTime })) {
+    return false
+  }
+
+  // キーワードが空なら無効と判定する
+  if (!keywords.length) {
+    return false
+  }
+
+  // 1回あたりの実行数が空なら無効と判定する
+  if (!count) {
+    return false
+  }
+
+  return true
 }
 
 /**
