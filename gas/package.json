@@ -4,6 +4,7 @@
     "push": "npm run build && clasp push"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.16.11",
     "@types/google-apps-script": "^1.0.46",
     "twitter-text": "^3.1.0"
   },
