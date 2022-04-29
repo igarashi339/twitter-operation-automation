@@ -1,71 +1,39 @@
-import { GetAllData } from "./SpreadSheatHandler"
-import { SearchRecentTweets, LikeTweet } from "./TwitterHandler"
+import { LikeTweet, SearchRecentTweetsWithoutRetweets } from "./TwitterHandler"
+import { GetFunctionInfo } from "./Utilities"
 
 export function ExecLike() {
   try {
     ExecLikeImpl()
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
   }
 }
 
 function ExecLikeImpl() {
-  const likeSetting = GetLikeInfoFromShreadSheet()
+  // いいねの設定を取得する
+  const { isOn, rows } = GetFunctionInfo("いいね")
 
-  // いいね機能がOFFなら何もしない
-  if (likeSetting["likeOn"] == "OFF") {
+  // 全体設定でいいね機能がOFFになっている場合は何もしないで終了する
+  if (!isOn) {
     return
   }
 
-  // いいね機能のアクティブ時間外なら何もしない
-  if (!IsLikeTargetTime(likeSetting)) {
-    return
-  }
+  // 各行に対していいねを実行する
+  rows.forEach(({ isValid, query, count }) => {
+    // アクティブ時間でなければ何もしないで終了する(未入力チェックも行う)
+    if (!isValid) {
+      return
+    }
 
-  // いいね対象のツイートを取得する（リツイートは除外）
-  const queryStr = GetLikeTargetTweetQuery(likeSetting)
-  const likeCandidateTweetList = SearchRecentTweets(queryStr)
-  const retweetExcludeTweetList = likeCandidateTweetList.filter(tweetInfo => tweetInfo["referenced_tweets"] == undefined)
-  const likeTargetTweetList = retweetExcludeTweetList.slice(0, likeSetting["likeNumPerExec"])
+    // キーワードをツイートしている人を取得する
+    const tweets = SearchRecentTweetsWithoutRetweets(query)
 
-  // 取得したツイートをいいねする
-  for (const targetTweet of likeTargetTweetList) {
-    LikeTweet(targetTweet["tweetId"])
-  }
-}
+    // 1回あたりの実行数に絞る
+    const likeTargetTweetList = tweets.slice(0, count)
 
-/**
- * スプレッドシートからいいね関連の設定を取得する。
- */
-function GetLikeInfoFromShreadSheet() {
-  const overhaulSetting = GetAllData("全体設定")
-  const likeOn = overhaulSetting[8][1]
-  const likeSetting = GetAllData("いいね・リツイート・フォロー")
-  return {
-    "likeOn": likeOn,
-    "startTimeStr": likeSetting[0][1],
-    "endTimeStr": likeSetting[0][2],
-    "likeNumPerExec": likeSetting[0][3],
-    "keywordList": likeSetting[0].slice(4, 9)
-  }
-}
-
-/**
- * 現在時刻といいね機能有効時刻を比較し、いいねすべき時刻ならtrueを返す。
- */
-function IsLikeTargetTime(likeSetting) {
-  const currentDate = new Date()
-  const currentHour = currentDate.getHours()
-  const startTime = Number(likeSetting["startTimeStr"].replace("時", ""))
-  const endTime = Number(likeSetting["endTimeStr"].replace("時", ""))
-  return startTime <= currentHour && currentHour <= endTime
-}
-
-/**
- * いいね対象のツイートの検索クエリを返す。
- */
-function GetLikeTargetTweetQuery(likeSetting) {
-  const blankExcludedList = likeSetting["keywordList"].filter(keyword => keyword != "")
-  const queryStr = blankExcludedList.join(" OR ")
-  return queryStr
+    // 取得したツイートをいいねする
+    for (const { tweetId } of likeTargetTweetList) {
+      LikeTweet(tweetId)
+    }
+  })
 }
