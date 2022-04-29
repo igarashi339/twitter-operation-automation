@@ -27,3 +27,8 @@ shell:
 .PHONY: copy
 copy:
 	sudo docker cp twitter-operation-automation_clasp_1:/code/node_modules ./gas/
+
+# ビルドしてプッシュ
+.PHONY: push
+push:
+	docker-compose run --rm clasp ash -c "npm run build && clasp push"
