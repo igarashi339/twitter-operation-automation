@@ -21,7 +21,7 @@ delete-all:
 # フロントエンドのコンテナに入る
 .PHONY: shell
 shell:
-	docker-compose exec clasp ash
+	docker-compose run --rm clasp ash
 
 # nodemodulesを手元にコピーする(エディターの補完を効かせるため)
 .PHONY: copy
