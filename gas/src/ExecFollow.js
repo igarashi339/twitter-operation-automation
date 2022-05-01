@@ -1,43 +1,42 @@
-import { GetOnOffSetting, GetFunctionSettings, FormatDate, IsActive } from "./Utilities"
-import { GetAllData, AddData} from "./SpreadSheatHandler"
-import { GetUserInfo, SearchRecentTweets, FollowUser } from "./TwitterHandler"
+import { FormatDate, GetFunctionInfo } from "./Utilities"
+import { GetAllData, AddData } from "./SpreadSheatHandler"
+import { GetUserInfo, SearchRecentTweetsWithoutRetweets, FollowUser } from "./TwitterHandler"
 
 export function ExecFollow() {
   try {
     ExecFollowImpl()
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
   }
 }
 
 function ExecFollowImpl() {
+  // フォローの設定を取得する
+  const { isOn, rows } = GetFunctionInfo("フォロー")
+
   // 全体設定でフォロー機能がOFFになっている場合は何もしないで終了する
-  if (GetOnOffSetting("フォロー") == "OFF") {
+  if (!isOn) {
     return
   }
 
-  // スプレッドシートからフォロー設定を取得する
-  const followSettings = GetFunctionSettings("フォロー")
-
-  // 一応複数行あってもいいようにしておく
-  followSettings.forEach(row => {
-    // アクティブ時間でなければ何もしないで終了する
-    if (!IsActive(row)) {
+  // 各行に対してフォローを実行する
+  rows.forEach(({ isValid, query, count }) => {
+    // アクティブ時間でなければ何もしないで終了する(未入力チェックも行う)
+    if (!isValid) {
       return
     }
 
     // キーワードをツイートしている人を取得する
-    const query = row.keywords.join(" OR ")
-    const recentTweets = SearchRecentTweets(query)
+    const tweets = SearchRecentTweetsWithoutRetweets(query)
 
     // 対象外のツイートを取り除く
-    const tweets = FilterRecentTweets(recentTweets)
+    const filteredTweets = FilterRecentTweets(tweets)
 
     // ツイートからユーザ情報にする
-    const userInfo = ConvertRecentTweetsToUserInfo(tweets)
+    const userInfo = ConvertRecentTweetsToUserInfo(filteredTweets)
 
     // フォロー返しをしてくれそうな人に絞って、ついでに1回あたりの実行数に絞る
-    const shouldFollowUsers = userInfo.filter(user => ShouldFollow(user)).slice(0, row.count)
+    const shouldFollowUsers = userInfo.filter(user => ShouldFollow(user)).slice(0, count)
 
     // フォローしてスプレッドシートを更新する
     shouldFollowUsers.forEach(user => {
@@ -64,16 +63,12 @@ function GetFollowedUsers() {
 
 /**
  * 対象外のツイートを取り除く。取り除くのは以下
- * ・リツイート
  * ・一度フォローしたことがあるユーザ
  */
 function FilterRecentTweets(recentTweets) {
-  // リツイートを除く
-  const withoutRetweet = recentTweets.filter(tweet => typeof tweet.referenced_tweets === "undefined")
-
   // スプレッドシートに書いてある人(一度フォローした人)を除く
   const followedUsers = GetFollowedUsers()
-  const tweets = withoutRetweet.filter(({ authorId }) => !followedUsers.some(({ userId }) => userId == authorId))
+  const tweets = recentTweets.filter(({ authorId }) => !followedUsers.some(({ userId }) => userId == authorId))
 
   return tweets
 }

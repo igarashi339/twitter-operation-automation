@@ -25,6 +25,14 @@ export function SearchRecentTweets(query) {
 }
 
 /**
+ * SearchRecentTweetsからリツイートを取り除いたものを返してくれる。
+ */
+export function SearchRecentTweetsWithoutRetweets(query) {
+  const recentTweets = SearchRecentTweets(query)
+  return recentTweets.filter(tweet => typeof tweet.referenced_tweets === "undefined")
+}
+
+/**
  * ユーザIDを指定して当該ユーザの情報を取得する。
  * Rate Limit: 900/15[分]
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-id
@@ -208,7 +216,7 @@ export function GetSelfFollowing() {
  * ref: https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference/get-users-id-followers
  * RateLimit: 15回/15分
  */
- export function GetSelfFollower() {
+export function GetSelfFollower() {
   const secrets = GetSecretsFromSpreadSheet()
   const service = GetService(secrets);
   const selfUserId = GetUserIdByUsername(secrets["selfUserName"])
