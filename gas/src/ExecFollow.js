@@ -1,4 +1,4 @@
-import { FormatDate, GetFunctionInfo } from "./Utilities"
+import { FormatDate, GetFunctionInfo, GetNGWordList } from "./Utilities"
 import { GetAllData, AddData } from "./SpreadSheatHandler"
 import { GetUserInfo, SearchRecentTweetsWithoutRetweets, FollowUser } from "./TwitterHandler"
 
@@ -19,6 +19,9 @@ function ExecFollowImpl() {
     return
   }
 
+  // NGワードのリストを取得
+  const ngWordList = GetNGWordList()
+
   // 各行に対してフォローを実行する
   rows.forEach(({ isValid, query, count }) => {
     // アクティブ時間でなければ何もしないで終了する(未入力チェックも行う)
@@ -35,8 +38,11 @@ function ExecFollowImpl() {
     // ツイートからユーザ情報にする
     const userInfo = ConvertRecentTweetsToUserInfo(filteredTweets)
 
+    // NG情報を含んでいるユーザを排除する
+    const okUserInfo = FilterNgUserInfo(userInfo, ngWordList)
+
     // フォロー返しをしてくれそうな人に絞って、ついでに1回あたりの実行数に絞る
-    const shouldFollowUsers = userInfo.filter(user => ShouldFollow(user)).slice(0, count)
+    const shouldFollowUsers = okUserInfo.filter(user => ShouldFollow(user)).slice(0, count)
 
     // フォローしてスプレッドシートを更新する
     shouldFollowUsers.forEach(user => {
@@ -93,4 +99,22 @@ function ConvertRecentTweetsToUserInfo(recentTweets) {
  */
 function ShouldFollow({ followersCount, followingCount }) {
   return followingCount / followersCount > 0.6 ? true : false
+}
+
+/**
+ * ユーザ名、およびプロフィールにNGワードを含むユーザを除去する。
+ */
+function FilterNgUserInfo(userInfo, ngWordList) {
+  const filterNGUser = (user, ngWordList) => {
+    for (const ngWord of ngWordList) {
+      if (user.name.indexOf(ngWord) !== -1) {
+        return false
+      }
+      if (user.description.indexOf(ngWord) !== -1) {
+        return false
+      }
+    }
+    return true
+  }
+  return userInfo.filter(user => filterNGUser(user, ngWordList))
 }

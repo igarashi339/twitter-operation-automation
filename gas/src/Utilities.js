@@ -4,7 +4,7 @@ import twitter from "twitter-text"
 /**
  * 全体設定から各機能のON/OFFを取得する
  */
-export function GetOnOffSetting(key) {
+export function GetCommonSetting(key) {
   const settings = GetAllData("全体設定")
   const setting = settings.find(arr => arr[0] == key)
   return setting[1]
@@ -36,7 +36,7 @@ export function GetFunctionSettings(key) {
  * いいね・リツイート・フォローの情報をいろいろ加工して返す
  */
 export function GetFunctionInfo(key) {
-  const onOff = GetOnOffSetting(key)
+  const onOff = GetCommonSetting(key)
   const settings = GetFunctionSettings(key)
   const isOn = onOff == "ON"
   const rows = settings.map(setting => ({
@@ -48,6 +48,22 @@ export function GetFunctionInfo(key) {
     isOn,
     rows
   }
+}
+
+/**
+ * NGワードをリストで取得する。空欄の場合は無視する。
+ */
+export function GetNGWordList() {
+  const ngWordKeyList = ["NGワード1","NGワード2","NGワード3"]
+  var ngWordList = []
+  for (const ngWordKey of ngWordKeyList) {
+    const ngWord = GetCommonSetting(ngWordKey)
+    if (ngWord == "") {
+      continue
+    }
+    ngWordList.push(ngWord)
+  }
+  return ngWordList
 }
 
 /**
