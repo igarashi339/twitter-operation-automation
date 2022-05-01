@@ -4,7 +4,7 @@ export function TwitterHandlerTest() {
 }
 
 /**
- * キーワードを指定して最近投稿されたツイートをリストで取得する。リツイートは取得しない。
+ * キーワードを指定して最近投稿されたツイートをリストで取得する。
  * Rate Limit: 180/15[分]
  * ref: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
  */
@@ -41,7 +41,7 @@ export function GetUserInfo(userId) {
   const secrets = GetSecretsFromSpreadSheet()
   const service = GetService(secrets);
 
-  const userFields = "id,name,username,protected,public_metrics"
+  const userFields = "id,name,username,protected,public_metrics,description"
   const url = `https://api.twitter.com/2/users/${userId}?user.fields=${userFields}`
   const response = JSON.parse(service.fetch(url, { "method": "get" }));
   return {
@@ -50,7 +50,8 @@ export function GetUserInfo(userId) {
     "name": response["data"]["name"],
     "protected": response["data"]["protected"],
     "followersCount": response["data"]["public_metrics"]["followers_count"],
-    "followingCount": response["data"]["public_metrics"]["following_count"]
+    "followingCount": response["data"]["public_metrics"]["following_count"],
+    "description": response["data"]["description"]
   }
 }
 

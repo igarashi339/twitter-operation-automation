@@ -1,6 +1,6 @@
 import { GetAllData } from "./SpreadSheatHandler"
 import { CreateTweet, CreateReplyTweet } from "./TwitterHandler"
-import { GetOnOffSetting } from "./Utilities"
+import { GetCommonSetting } from "./Utilities"
 
 export function ExecTweet() {
   try {
@@ -12,7 +12,7 @@ export function ExecTweet() {
 
 function ExecTweetImpl() {
   // 全体設定でツイート機能がOFFになっている場合は何もしないで終了する
-  if (GetOnOffSetting("ツイート") == "OFF") {
+  if (GetCommonSetting("ツイート") == "OFF") {
     return
   }
 

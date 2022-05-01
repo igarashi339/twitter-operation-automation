@@ -1,4 +1,4 @@
-import { GetOnOffSetting } from "./Utilities"
+import { GetCommonSetting } from "./Utilities"
 import { GetSelfFollowing, GetSelfFollower, UnfollowUser } from "./TwitterHandler"
 import { GetAllData } from "./SpreadSheatHandler"
 
@@ -12,7 +12,7 @@ export function ExecUnfollow() {
 
 function ExecUnfollowImpl() {
   // 全体設定でアンフォロー機能がOFFになっている場合は何もしないで終了する
-  if (GetOnOffSetting("アンフォロー") == "OFF") {
+  if (GetCommonSetting("アンフォロー") == "OFF") {
     return
   }
 
