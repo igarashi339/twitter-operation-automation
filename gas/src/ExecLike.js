@@ -48,7 +48,6 @@ function ExecLikeImpl() {
  * ツイート本文にNGワードを含むツイートを除外する。
  */
 function FilterNgTweet(tweets, ngWordList) {
-  console.log(tweets)
   const filterNgTweet = (tweet, ngWordList) => {
     for (const ngWord of ngWordList) {
       if (tweet.text.indexOf(ngWord) != -1) {

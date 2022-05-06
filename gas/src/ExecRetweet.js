@@ -1,5 +1,5 @@
 import { Retweet, SearchRecentTweetsWithoutRetweets } from "./TwitterHandler"
-import { GetFunctionInfo } from "./Utilities"
+import { GetFunctionInfo, GetNGWordList } from "./Utilities"
 
 export function ExecRetweet() {
   try {
@@ -18,6 +18,9 @@ function ExecRetweetImpl() {
     return
   }
 
+  // NGワードのリストを取得
+  const ngWordList = GetNGWordList()
+
   // 各行に対してリツイートを実行する
   rows.forEach(({ isValid, query, count }) => {
     // アクティブ時間でなければ何もしないで終了する(未入力チェックも行う)
@@ -28,12 +31,30 @@ function ExecRetweetImpl() {
     // キーワードをツイートしている人を取得する
     const tweets = SearchRecentTweetsWithoutRetweets(query)
 
+    // NGキーワードを含んでいるツイートを除外
+    const ngWordFilteredTweets = FilterNgTweet(tweets, ngWordList)
+
     // 1回あたりの実行数に絞る
-    const retweetTargetTweetList = tweets.slice(0, count)
+    const retweetTargetTweetList = ngWordFilteredTweets.slice(0, count)
 
     // 取得したツイートをリツイートする
     for (const { tweetId } of retweetTargetTweetList) {
       Retweet(tweetId)
     }
   })
+}
+
+/**
+ * ツイート本文にNGワードを含むツイートを除外する。
+ */
+ function FilterNgTweet(tweets, ngWordList) {
+  const filterNgTweet = (tweet, ngWordList) => {
+    for (const ngWord of ngWordList) {
+      if (tweet.text.indexOf(ngWord) != -1) {
+        return false
+      }
+    }
+    return true
+  }
+  return tweets.filter(tweet => filterNgTweet(tweet, ngWordList))
 }
